@@ -1,0 +1,12 @@
+fastapi 
+uvicorn 
+redis 
+langchain 
+openai 
+PyPDF2 
+tika 
+python-dotenv
+email-validator
+pdfminer.six
+python-multipart
+aiosqlite
