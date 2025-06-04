@@ -3,6 +3,17 @@
 This project is a modular, multi-agent AI system that processes and classifies incoming data (Email, JSON, PDF), extracts structured information, flags anomalies, and maintains a shared memory for traceability and downstream actions.
 
 The 'data' folder contains sample data. The 'images' folder contains implementation screenshots.
+---
+## Demo Video 
+
+https://drive.google.com/file/d/1b074WG8VxqDHGYxask814JNTuDay5bIl/view?usp=sharing
+
+---
+
+## Flow Diagram
+
+![Flow Diagram](https://github.com/user-attachments/assets/4d563a74-41ef-4fa1-82b0-1ce430cc5a3a)
+
 
 ---
 
@@ -28,11 +39,6 @@ The 'data' folder contains sample data. The 'images' folder contains implementat
   - `/memory/` endpoint to view raw shared memory as JSON
   - `/memory/table` endpoint to view memory as HTML tables
 
----
-
-## Flow Diagram
-
-![Flow Diagram](https://github.com/user-attachments/assets/4d563a74-41ef-4fa1-82b0-1ce430cc5a3a)
 
 ---
 
