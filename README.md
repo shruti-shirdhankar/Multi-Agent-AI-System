@@ -32,7 +32,7 @@ The 'data' folder contains sample data. The 'images' folder contains implementat
 
 ## Flow Diagram
 
-![Alt text](images\Flow Diagram.png)
+![Flow Diagram](https://github.com/user-attachments/assets/4d563a74-41ef-4fa1-82b0-1ce430cc5a3a)
 
 ---
 
