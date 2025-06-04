@@ -1,7 +1,8 @@
 # Multi-Agent AI System
 
 This project is a modular, multi-agent AI system that processes and classifies incoming data (Email, JSON, PDF), extracts structured information, flags anomalies, and maintains a shared memory for traceability and downstream actions.
-The 'data' file contains sample data.
+
+The 'data' folder contains sample data. The 'images' folder contains implementation screenshots.
 
 ---
 
@@ -26,6 +27,12 @@ The 'data' file contains sample data.
   - `/upload/` endpoint for uploading files (Email, JSON, PDF)
   - `/memory/` endpoint to view raw shared memory as JSON
   - `/memory/table` endpoint to view memory as HTML tables
+
+---
+
+## Flow Diagram
+
+![Alt text](images\Flow Diagram.png)
 
 ---
 
