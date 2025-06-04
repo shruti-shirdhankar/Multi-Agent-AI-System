@@ -1,4 +1,5 @@
-# memory/memory_store.py
+from datetime import datetime
+
 shared_memory = {
     "inputs": [],
     "extracted": [],
@@ -6,9 +7,37 @@ shared_memory = {
     "traces": []
 }
 
-def store_input(data): shared_memory["inputs"].append(data)
-def store_output(data): shared_memory["extracted"].append(data)
-def store_action(data): shared_memory["actions"].append(data)
-def store_trace(data): shared_memory["traces"].append(data)
+# Store input metadata: source, timestamp, classification
+def store_input(source, classification):
+    shared_memory["inputs"].append({
+        "source": source,
+        "timestamp": datetime.now().isoformat(),
+        "classification": classification
+    })
 
-def get_memory(): return shared_memory
+# Store extracted data (per agent)
+def store_output(agent, data):
+    shared_memory["extracted"].append({
+        "agent": agent,
+        "timestamp": datetime.now().isoformat(),
+        "data": data
+    })
+
+# Store actions triggered
+def store_action(action, reason):
+    shared_memory["actions"].append({
+        "action": action,
+        "timestamp": datetime.now().isoformat(),
+        "reason": reason
+    })
+
+# Store agent decision trace
+def store_trace(agent, decision):
+    shared_memory["traces"].append({
+        "agent": agent,
+        "timestamp": datetime.now().isoformat(),
+        "decision": decision
+    })
+
+def get_memory():
+    return shared_memory

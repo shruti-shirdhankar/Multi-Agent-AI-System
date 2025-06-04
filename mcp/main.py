@@ -1,21 +1,16 @@
 from fastapi import FastAPI, UploadFile
 from agents import classifier_agent, email_agent, json_agent, pdf_agent
-from memory.memory_store import store_input, store_output, store_action
-
-app = FastAPI()
+from memory.memory_store import get_memory
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import HTMLResponse
+import json
 
 app = FastAPI()
 
-origins = [
-    "http://localhost:3000",  # your frontend URL
-    "http://127.0.0.1:3000",
-    # add other allowed origins here
-]
+
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,  
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -26,26 +21,57 @@ async def upload(file: UploadFile):
     contents = await file.read()
     text = contents.decode("utf-8", errors="ignore")
 
+    # Classify input format and intent and store metadata
     classification = classifier_agent.classify_input(text, file.filename)
-    store_input({"filename": file.filename, "classification": classification})
+
 
     result = {}
+
+    # Routing to correct agent
     if classification["format"] == "Email":
         result = email_agent.process_email(text)
+        agent = "Email Agent"
     elif classification["format"] == "JSON":
-        import json
-        result = json_agent.validate_json(json.loads(text))
+        try:
+            json_data = json.loads(text)
+            result = json_agent.validate_json(json_data)
+        except json.JSONDecodeError:
+            result = {"error": "Invalid JSON format"}
+        agent = "JSON Agent"
     elif classification["format"] == "PDF":
         path = f"data/{file.filename}"
         with open(path, "wb") as f:
             f.write(contents)
         result = pdf_agent.parse_pdf(path)
+        agent = "PDF Agent"
 
-    store_output(result)
+    return {"result": result}
 
-    # Simulate Action
-    if "tone" in result and result["tone"] == "Escalated":
-        action = {"type": "POST /crm/escalate", "reason": "angry email"}
-        store_action(action)
+@app.get("/memory/")
+def read_memory():
+    return get_memory()
 
-    return {"status": "processed", "result": result}
+@app.get("/memory/table", response_class=HTMLResponse)
+def read_memory_table():
+    memory = get_memory()
+    html = "<h2>Inputs</h2><table border='1'><tr><th>Source</th><th>Timestamp</th><th>Classification</th></tr>"
+    for item in memory["inputs"]:
+        html += f"<tr><td>{item['source']}</td><td>{item['timestamp']}</td><td>{item['classification']}</td></tr>"
+    html += "</table>"
+
+    html += "<h2>Extracted</h2><table border='1'><tr><th>Agent</th><th>Timestamp</th><th>Data</th></tr>"
+    for item in memory["extracted"]:
+        html += f"<tr><td>{item['agent']}</td><td>{item['timestamp']}</td><td>{item['data']}</td></tr>"
+    html += "</table>"
+
+    html += "<h2>Actions</h2><table border='1'><tr><th>Action</th><th>Timestamp</th><th>Reason</th></tr>"
+    for item in memory["actions"]:
+        html += f"<tr><td>{item['action']}</td><td>{item['timestamp']}</td><td>{item['reason']}</td></tr>"
+    html += "</table>"
+
+    html += "<h2>Traces</h2><table border='1'><tr><th>Agent</th><th>Timestamp</th><th>Decision</th></tr>"
+    for item in memory["traces"]:
+        html += f"<tr><td>{item['agent']}</td><td>{item['timestamp']}</td><td>{item['decision']}</td></tr>"
+    html += "</table>"
+
+    return html
