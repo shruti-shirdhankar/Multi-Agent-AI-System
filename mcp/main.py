@@ -7,8 +7,6 @@ import json
 
 app = FastAPI()
 
-
-
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
@@ -23,7 +21,6 @@ async def upload(file: UploadFile):
 
     # Classify input format and intent and store metadata
     classification = classifier_agent.classify_input(text, file.filename)
-
 
     result = {}
 
